@@ -1,41 +1,22 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.numeric_std.ALL;
+module xeta_count(
+    input  wire clk,
+    input  wire load,
+    input  wire en,
+    input  wire [2:0] D,
+    output reg  jm1
+);
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+reg [2:0] count;
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+always @(posedge clk) begin
+    if (load)
+        count <= 3'b000;
+    else if (en)
+        count <= count + 1;
+end
 
-entity xeta_count is
-    Port ( clk,load,en : in STD_LOGIC;
-    D : in std_logic_vector (2 downto 0);
-    
-    jm1 :  out std_logic);
-end xeta_count ;
+always @(*) begin
+    jm1 = (count == 3'b010) ? 1'b1 : 1'b0;
+end
 
-architecture Behavioral of xeta_count is
-signal count : unsigned(2 downto 0);
-signal q : std_logic_vector( 2 downto 0);
-
-begin
-process (clk)
-begin
- if rising_edge(clk) then
-
-if load ='1' then
-count<="000"  ;
-else if en = '1' then
-count <= count + 1;
-end if;
-end if;
-end if;
-end process;
-q <= std_logic_vector(count);
-jm1<= '1' when q = "010" else '0';
-
-end Behavioral;
+endmodule
